@@ -1,0 +1,34 @@
+{
+  "name": "@datasco/formula",
+  "version": "1.0.0",
+  "description": "Simple language for describing data formats, compilable to Regex",
+  "main": "index.js",
+  "scripts": {
+    "serve": "nodemon",
+    "build": "npx tsc",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/datasco/Formula.git"
+  },
+  "keywords": [
+    "regex",
+    "language",
+    "dsl"
+  ],
+  "author": "datasco",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/datasco/Formula/issues"
+  },
+  "homepage": "https://github.com/datasco/Formula#readme",
+  "dependencies": {
+    "@types/jest": "^29.0.3",
+    "@types/node": "^18.7.18",
+    "nodemon": "^2.0.20",
+    "ts-jest": "^29.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.3"
+  }
+}
