@@ -1,6 +1,6 @@
 {
   "name": "formula",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Simple language for describing data formats, compilable to Regex",
   "main": "build/cli.js",
   "files": [
