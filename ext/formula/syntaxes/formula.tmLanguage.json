@@ -1,0 +1,51 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Formula",
+	"patterns": [
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#constants"
+		},
+		{
+			"include": "#strings"
+		}
+	],
+	"repository": {
+		"comments": {
+			"patterns": [{
+				"name": "comment.line",
+				"begin": "//",
+				"end": "$"
+			}]
+		},
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.control.formula",
+				"match": "\\b(define|match|group|test|if|else|or)\\b"
+			}]
+		},
+		"constants": {
+			"patterns": [{
+				"name": "constant",
+				"match": "\\b(START|END|SPACE|WORD|NONWORD|LETTER|NONDIGIT|DIGIT)\\b"
+			}]
+		},
+		"strings": {
+			"name": "string.quoted.double.formula",
+			"begin": "'",
+			"end": "'",
+			"patterns": [
+				{
+					"name": "constant.character.escape.formula",
+					"match": "\\\\."
+				}
+			]
+		}
+	},
+	"scopeName": "source.formula"
+}

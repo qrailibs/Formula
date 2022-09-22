@@ -1,0 +1,25 @@
+{
+  "name": "formula",
+  "displayName": "Formula",
+  "description": "Support for formula regex-based language",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.71.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "formula",
+      "aliases": ["Formula", "formula"],
+      "extensions": [".formula"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "formula",
+      "scopeName": "source.formula",
+      "path": "./syntaxes/formula.tmLanguage.json"
+    }]
+  }
+}
