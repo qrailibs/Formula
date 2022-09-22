@@ -1,5 +1,5 @@
 {
-  "name": "formula",
+  "name": "formula-cli",
   "version": "1.0.2",
   "description": "Simple language for describing data formats, compilable to Regex",
   "main": "build/cli.js",
@@ -7,7 +7,7 @@
     "build"
   ],
   "bin": {
-    "tran": "./build/cli.js"
+    "formula": "./build/cli.js"
   },
   "scripts": {
     "serve": "nodemon",
