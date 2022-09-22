@@ -1,3 +1,7 @@
-define LOW match 'X'
+# Index
+define INDEX group index {
+	match(6) DIGIT
+}
 
-match LOW
+# Возможен почтовый индекс
+match? INDEX

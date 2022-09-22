@@ -19,14 +19,14 @@
 		"comments": {
 			"patterns": [{
 				"name": "comment.line",
-				"begin": "//",
+				"begin": "#",
 				"end": "$"
 			}]
 		},
 		"keywords": {
 			"patterns": [{
 				"name": "keyword.control.formula",
-				"match": "\\b(define|match|group|test|if|else|or)\\b"
+				"match": "\\b(define|match|group|test|if|else|or|maybe|many)\\b"
 			}]
 		},
 		"constants": {

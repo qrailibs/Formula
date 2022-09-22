@@ -205,8 +205,8 @@ export default class Parser {
 			// Name
 			let name: string | null | undefined = undefined
 			if(is(TokenType.Name)) {
-				next()
 				name = tokens[currPos].value
+				next()
 			}
 			// Anonymous name
 			else if(is(TokenType.Anonymous)) {

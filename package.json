@@ -2,9 +2,10 @@
   "name": "@datasco/formula",
   "version": "1.0.0",
   "description": "Simple language for describing data formats, compilable to Regex",
-  "main": "index.js",
+  "main": "build/cli.js",
+  "files": [ "build" ],
   "bin": {
-    "tran": "./build/index.js"
+    "tran": "./build/cli.js"
   },
   "scripts": {
     "serve": "nodemon",
