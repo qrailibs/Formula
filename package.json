@@ -1,6 +1,6 @@
 {
   "name": "formula-cli",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Simple language for describing data formats, compilable to Regex",
   "main": "build/cli.js",
   "files": [
