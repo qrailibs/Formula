@@ -81,6 +81,7 @@ export default class Parser {
 			}
 			return null
 		}
+
 		function parseBody(until: TokenType): IStatement[] {
 			let result: IStatement[] = []
 
@@ -112,53 +113,52 @@ export default class Parser {
 			return result
 		}
 
-		// Match
-		function parseMatch(): MatchStatement | null {
-			next()
-			let nextToken: Token = tokens[currPos]
+		// (min,max)/+ and ?
+		function parseMatchParams(): any {
+			let token: Token = tokens[currPos]
 			let params: any = {
 				optional: false
 			}
 
 			// Multiple?
-			if(nextToken?.type === TokenType.Mutiple) {
+			if(token?.type === TokenType.Mutiple) {
 				// From 1 to unlimited
 				params.amount = {}
 
 				// Next
 				next()
-				nextToken = tokens[currPos]
+				token = tokens[currPos]
 			}
-			else if(nextToken?.type === TokenType.ArgStart) {
+			else if(token?.type === TokenType.ArgStart) {
 				let min = undefined
 				let max = undefined
 
 				// Next
 				next()
-				nextToken = tokens[currPos]
+				token = tokens[currPos]
 
 				// Minimal
-				if(nextToken?.type === TokenType.LiteralNumber) {
-					min = parseInt(nextToken.value)
+				if(token?.type === TokenType.LiteralNumber) {
+					min = parseInt(token.value)
 					next()
 				}
 				else {
-					console.error('Expected number (amount of matches), but got: ' + nextToken)
+					console.error('Expected number (amount of matches), but got: ' + token)
 					next()
 				}
-				nextToken = tokens[currPos]
+				token = tokens[currPos]
 
 				// Maximal
-				if(min !== undefined && nextToken?.type === TokenType.Comma) {
+				if(min !== undefined && token?.type === TokenType.Comma) {
 					next()
-					nextToken = tokens[currPos]
+					token = tokens[currPos]
 
-					if(nextToken?.type === TokenType.LiteralNumber) {
-						max = parseInt(nextToken.value)
+					if(token?.type === TokenType.LiteralNumber) {
+						max = parseInt(token.value)
 						next()
 					}
 					else {
-						console.error('Expected number (amount of max matches), but got: ' + nextToken)
+						console.error('Expected number (amount of max matches), but got: ' + token)
 						prev()
 					}
 				}
@@ -166,41 +166,58 @@ export default class Parser {
 				// )
 				if(expect(TokenType.ArgEnd)) {
 					next()
-					nextToken = tokens[currPos]
+					token = tokens[currPos]
 
 					params.amount = { min, max }
 				}
 			}
 
 			// Optional?
-			if(nextToken?.type === TokenType.Optional) {
+			if(token?.type === TokenType.Optional) {
 				params.optional = true
 				// Next
 				next()
-				nextToken = tokens[currPos]
+				token = tokens[currPos]
 			}
 
-			// Special matcher
-			if(nextToken?.type === TokenType.Name) {
-				let stmt = new MatchStatement({ of: nextToken.value }, params)
+			return params
+		}
+
+		// Match
+		function parseMatchPrimitive() {
+			let token: Token = tokens[currPos]
+
+			if(token?.type === TokenType.Name) {
 				next()
-				return stmt
+				return { of: token.value }
 			}
-			// Literal matcher
-			else if(nextToken?.type === TokenType.LiteralString) {
-				let stmt = new MatchStatement(nextToken.value, params)
+			else if(token?.type === TokenType.LiteralString) {
 				next()
-				return stmt
+				return token.value
 			}
 			else {
-				console.error('Invalid value after "match": ' + nextToken.value)
-				return null
+				throw new Error(`Expected match primitive (variable name or value), but got: "${token?.type}" (At line ${token?.pos?.start.line})`)
 			}
+		}
+
+		function parseMatch(): MatchStatement | null {
+			next()
+			let params = parseMatchParams()
+			let primitives: any[] = [ parseMatchPrimitive() ]
+
+			// Or
+			while(tokens[currPos]?.type === TokenType.Or) {
+				next()
+				primitives.push(parseMatchPrimitive())
+			}
+
+			return new MatchStatement(primitives, params)
 		}
 		
 		// Group
 		function parseGroup(): GroupStatement | null {
 			next()
+			let params: any = parseMatchParams()
 
 			// Name
 			let name: string | null | undefined = undefined
@@ -220,7 +237,7 @@ export default class Parser {
 
 			// Body
 			let body: IStatement[] = parseBody(TokenType.GroupEnd)
-			let group: GroupStatement = new GroupStatement(body, name)
+			let group: GroupStatement = new GroupStatement(body, params, name)
 
 			// }
 			expect(TokenType.GroupEnd)

@@ -16,6 +16,8 @@ export default class Lexer {
 			')': new Token(TokenType.ArgEnd, ')', null),
 			',': new Token(TokenType.Comma, ',', null),
 			'!': new Token(TokenType.Anonymous, '!', null),
+			'|': new Token(TokenType.Or, '|', null),
+			'&': new Token(TokenType.And, '&', null),
 			
 			'match': new Token(TokenType.Match, 'match', null),
 			'group': new Token(TokenType.Group, 'group', null),
@@ -99,10 +101,10 @@ export default class Lexer {
 			}
 
 			// String literal
-			if(char === "'") {
+			if(char === "'" || char === '"') {
 				next()
 
-				const bucket = lookahead(/[^']/)
+				const bucket = lookahead(new RegExp(`[^${char}]`))
 				out.push(new Token(TokenType.LiteralString, bucket.join(''), getPos()))
 				increase(bucket.length + 1)
 
@@ -172,6 +174,10 @@ export default class Lexer {
 					out.push(tok)
 					increase(key.length)
 					didMatch = true
+				}
+				else {
+					out.push(new Token(TokenType.Unknown, key, getPos()))
+					continue
 				}
 			}
 

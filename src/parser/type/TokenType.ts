@@ -1,6 +1,5 @@
 enum TokenType {
-	// \n
-	LineBreak = 'line_break',
+	Unknown = 'unknown',
 
 	// ?
 	Optional = '?',
@@ -22,6 +21,11 @@ enum TokenType {
 	Comma = ',',
 	// )
 	ArgEnd = ')',
+
+	// |
+	Or = '|',
+	// &
+	And = '&',
 
 	// match
 	Match = 'match',

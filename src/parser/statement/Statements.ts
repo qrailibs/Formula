@@ -29,24 +29,40 @@ type MatcherParams = {
 	optional: boolean,
 	amount?: MatcherAmount
 }
+function compileParams(original: string, params: MatcherParams): string {
+	return original
+		// Amount
+		+ (params.amount
+			? params.amount?.max
+				// Min, Max
+				? `{${params.amount?.min},${params.amount?.max}}`
+				// Unlimited
+				: params.amount?.min ? `{${params.amount?.min}}` : '+'
+			: '')
+		// Optional
+		+ (params.optional ? '?' : '')
+}
 
 class GroupStatement extends IParentStatement {
 	public named?: string | null
+	public params: MatcherParams
 
-	constructor(children: IStatement[], named?: string | null) {
+	constructor(children: IStatement[], params: MatcherParams, named?: string | null) {
 		super(StatementType.Group, children)
-
+		this.params = params
 		this.named = named
 	}
 
 	public serialize(ctx: StatementContext): string {
 		let children = this.children.map(child => child.serialize(ctx)).join('')
 
-		return this.named === null
+		let result = this.named === null
 			? `(?:${children})` // Group uncaptured (named=null)
 			: this.named === undefined
 				? `(${children})` // Group captured (named=undefined)
 				: `(?<${this.named}>${children})` // Group captured, named
+		
+		return compileParams(result, this.params)
 	}
 }
 
@@ -67,7 +83,7 @@ class IfElseStatement implements IStatement {
 		let childrenIf = this.branchIf.map(child => child.serialize(ctx)).join('')
 		let childrenElse = this.branchElse.map(child => child.serialize(ctx)).join('')
 
-		return `(?(?=${condition})${childrenIf}${childrenElse ? '|' + childrenElse : ''})`
+		return `(?(?=${condition})(${childrenIf}${childrenElse ? ')|(' + childrenElse : ''}))`
 	}
 }
 
@@ -90,76 +106,67 @@ type Matcher = SpecialMatcher | LiteralMatcher
 
 class MatchStatement implements IStatement {
 	public type: StatementType = StatementType.Match
-	public value: Matcher
+	public values: Matcher[]
 	public params: MatcherParams
 
-	constructor(value: Matcher, params: MatcherParams = { optional: false }) {
-		this.value = value
+	constructor(values: Matcher[], params: MatcherParams = { optional: false }) {
+		this.values = values
 		this.params = params
 	}
 
-	public serialize(ctx: StatementContext): string {
-		let result = null
+	private serializeOne(ctx: StatementContext, value: Matcher) {
 		// Special
-		if(typeof this.value === 'object' && 'of' in this.value) {
+		if(typeof value === 'object' && 'of' in value) {
 			// Constants
-			switch(this.value.of) {
+			switch(value.of) {
 				case 'START': {
-					result = '^'
-					break
+					return '^'
 				}
 				case 'END': {
-					result = '$'
-					break
+					return '$'
 				}
 				case 'DIGIT': {
-					result = '\\d'
-					break
+					return '\\d'
 				}
 				case 'NONDIGIT': {
-					result = '\\D'
-					break
+					return '\\D'
 				}
 				case 'LETTER': {
-					result = '[a-zA-Z]'
-					break
+					return '[a-zA-Z]'
 				}
 				case 'WORD': {
-					result = '\\w'
-					break
+					return '\\w'
 				}
 				case 'NONWORD': {
-					result = '\\W'
-					break
+					return '\\W'
 				}
 				case 'SPACE': {
-					result = '\\s'
-					break
+					return '\\s'
 				}
 			}
 
 			// Definitions
-			if(ctx.define[this.value.of]) {
-				result = ctx.define[this.value.of].value.serialize(ctx)
+			if(ctx.define[value.of]) {
+				return ctx.define[value.of].value.serialize(ctx)
 			}
 		}
 		// Literal
 		else {
-			result = this.value.replace('-', '\\-').replace('.', '\\.')
+			return value.replace('-', '\\-').replace('.', '\\.')
 		}
+	}
+
+	public serialize(ctx: StatementContext): string {
+		let result = null
+		
+		let doPacking = this.values.length > 1 && this.values.every(value => typeof value === 'string' ? value.length > 1 : true)
+		result = this.values.map(value => 
+			doPacking ? '(?:' + this.serializeOne(ctx, value) + ')'
+				: this.serializeOne(ctx, value)
+		).join('|')
 
 		return result !== null 
-			? result
-				// Amount
-				+ (this.params.amount
-					? this.params.amount?.max
-						// Min, Max
-						? `{${this.params.amount?.min},${this.params.amount?.max}}`
-						// Unlimited
-						: this.params.amount?.min ? `{${this.params.amount?.min}}` : '+'
-					: '')
-				// Optional
-				+ (this.params.optional ? '?' : '')
+			? compileParams(result, this.params)
 			: ''
 	}
 }
