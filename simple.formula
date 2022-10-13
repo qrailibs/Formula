@@ -1,8 +1,7 @@
-define Address_1 group Address {
-    match 'A'
-}
-define Address_2 group Address {
-    match 'A'
-}
+import 'formula.contacts'
 
-match Address_1 | Address_2
+# TODO!
+match formula_PHONE
+match formula_EMAIL
+match formula_ADDRESS
+

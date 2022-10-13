@@ -26,7 +26,7 @@
 		"keywords": {
 			"patterns": [{
 				"name": "keyword.control.formula",
-				"match": "\\b(define|match|group|test|if|else|or|maybe|many)\\b"
+				"match": "\\b(define|match|group|test|if|else|import|export)\\b"
 			}]
 		},
 		"constants": {

@@ -1,7 +1,0 @@
-# Index
-define INDEX group index {
-	match(6) DIGIT
-}
-
-# Возможен почтовый индекс
-match? INDEX

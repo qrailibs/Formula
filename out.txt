@@ -1,1 +1,1 @@
-(?:(?<Address>A))|(?:(?<Address>A))
+A|B|\s
