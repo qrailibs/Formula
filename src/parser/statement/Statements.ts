@@ -140,6 +140,9 @@ class MatchStatement implements IStatement {
 				case 'NONWORD': {
 					return '\\W'
 				}
+				case 'ANY': {
+					return '.'
+				}
 				case 'SPACE': {
 					return '\\s'
 				}

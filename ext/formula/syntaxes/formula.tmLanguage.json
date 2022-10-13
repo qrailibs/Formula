@@ -32,7 +32,7 @@
 		"constants": {
 			"patterns": [{
 				"name": "constant",
-				"match": "\\b(START|END|SPACE|WORD|NONWORD|LETTER|NONDIGIT|DIGIT)\\b"
+				"match": "\\b(START|END|SPACE|WORD|NONWORD|LETTER|NONDIGIT|DIGIT|ANY)\\b"
 			}]
 		},
 		"strings": {
