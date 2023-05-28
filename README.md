@@ -10,11 +10,21 @@ Compiled into regex:
 A+
 ```
 
-# Progress
-- [X] `match` Statements
-- [X] `group` Statements
-- [X] `if` and `else` Statements
-- [X] `define` Statements
+# Usage
+Install a Formula CLI firstly:
+```bash
+npm i formula-cli --scope=global
+```
+
+After installation you can use CLI to compile formula file:
+```bash
+formula compile example.formula
+```
+
+And also you can compile the whole directory:
+```bash
+formula compile src --dir
+```
 
 # Changelog
 

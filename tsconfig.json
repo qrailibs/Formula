@@ -7,7 +7,7 @@
 	"compilerOptions": {
 	  "incremental": true,
 	  "target": "es2016",
-	  "lib": ["es6"],
+	  "lib": ["es6", "ES2021.String"],
   
 	  /* Modules */
 	  "module": "commonjs",                                /* Specify what module code is generated. */

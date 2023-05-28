@@ -1,0 +1,26 @@
+# ----------
+# group - statement to group your matches
+# ----------
+
+# (Usual group) Compiled into: ()
+group { }
+
+# (Anonymous group) Compiled into: (?:)
+group! { }
+
+# (Group with name) Compiled into: (?<SomeGroup>)
+group SomeGroup { }
+
+# (Group with matches inside) Compiled into: (AB)
+group {
+	match 'A'
+	match 'B'
+}
+
+# (Group with another group inside) Compiled into: (A(B))
+group {
+	match 'A'
+	group {
+		match 'B'
+	}
+}

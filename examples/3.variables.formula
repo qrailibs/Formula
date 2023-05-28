@@ -1,0 +1,11 @@
+# ----------
+# define - used to define variables, so you don't have to repeat yourself!
+# ----------
+
+# Defining a variable SomeA which matches "A". Compiled into: A
+define SomeA match 'A'
+match SomeA
+
+# Defining a variable SomeA which matches "B" within group. Compiled into: (B)
+define SomeB group { match 'B' }
+match SomeB

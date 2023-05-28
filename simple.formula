@@ -1,7 +1,16 @@
-import 'formula.contacts'
+define VAL match '[a-f0-9]'
+define VAL_3 match(3) VAL
+define VAL_6 match(6) VAL
 
-# TODO!
-match formula_PHONE
-match formula_EMAIL
-match formula_ADDRESS
+# define HASHVALUE function (min, max) {
+#  	  match(min, max) '[a-f0-9]'
+# }
 
+match START
+
+match '#'
+group {
+	match VAL_3 | VAL_6 # 3 or 6 hex values
+}
+
+match END

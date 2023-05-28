@@ -153,9 +153,13 @@ class MatchStatement implements IStatement {
 				return ctx.define[value.of].value.serialize(ctx)
 			}
 		}
+		// Range of characters
+		else if(value.startsWith('[') && value.endsWith(']')) {
+			return value
+		}
 		// Literal
 		else {
-			return value.replace('-', '\\-').replace('.', '\\.')
+			return value.replace(/\-/g, '\\-').replace(/\./g, '\\.')
 		}
 	}
 

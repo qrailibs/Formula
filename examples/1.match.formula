@@ -1,0 +1,54 @@
+# ----------
+# match - simple statement that just matches a string
+# ----------
+
+# === Examples of matching different things ===
+
+# (Matching literal) Compiled into: HI
+match 'HI'
+
+# (Matching start of string) Compiled into: ^
+match START
+
+# (Matching end of string) Compiled into: $
+match END
+
+# (Matching all latin leters) Compiled into: [a-zA-Z]
+match LETTER
+
+# (Matching all leters) Compiled into: \w
+match WORD
+
+# (Matching space) Compiled into: \s
+match SPACE
+
+# (Matching nonletter characters) Compiled into: \W
+match NONWORD
+
+# (Mathing digits) Compiled into: \d
+match DIGIT
+
+# (Mathing nondigit characters) Compiled into: \D
+match NONDIGIT
+
+# (Mathing any characters) Compiled into: .
+match ANY
+
+# === Examples of matching different amount of times ===
+
+# (Matching from 1 to infinity times) Compiled into: A+
+match+ 'A'
+
+# (Matching 2 times) Compiled into: A{2}
+match(2) 'A'
+
+# (Matching from 1 to 5 times) Compiled into: A{1,5}
+match(1,5) 'A'
+
+# (Optional matching) Compiled into: A?
+match? 'A'
+
+# === Examples of matching with boolean logic ===
+
+# (Matching 'HI' or 'HEY') Compiled into: (?:HI)|(?:HEY)
+match 'HI' | 'HEY'

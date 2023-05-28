@@ -1,0 +1,22 @@
+# ----------
+# if/else - brings new functional possibilities to your formulas!
+# ----------
+
+# (If matched 'A' then match 'B') Compiled into: (?(?=A)B)
+if(match 'A') {
+	match 'B'
+}
+
+# (If matched 'AAA' then match 'CCC'. Example with variables) Compiled into: (?(?=AAA)CCC)
+define ConditionValue match 'AAA'
+if(match ConditionValue) {
+	match 'CCC'
+}
+
+# (If matched 'A' then match 'B' otherwise match 'C') Compiled into: (?(?=A)B|C)
+if(match 'A') {
+	match 'B'
+}
+else {
+	match 'C'
+}
