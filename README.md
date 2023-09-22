@@ -1,19 +1,38 @@
 # Formula
-Simple language for describing data formats, compilable to Regex
+Simple language for describing data formats, transpilable to RegExp.
 
-# Basic example
+# Syntax
+Example of advanced formula:
 ```formula
-match+ 'A'
+# Variables
+define VAL match '[a-f0-9]'
+define VAL_3 match(3) VAL
+define VAL_6 match(6) VAL
+
+# Tests
+test '#fff'
+test '#ababab'
+test '#000000'
+test '#f0f0f0'
+
+# Formula
+match START
+match '#'
+group {
+	match VAL_3 | VAL_6 # 3 or 6 hex values
+}
+match END
 ```
-Compiled into regex:
+
+Formula is gonna be transpiled into following RegExp:
 ```regex
-A+
+^#((?:[a-f0-9]{3})|(?:[a-f0-9]{6}))$
 ```
 
 # Usage
-Install a Formula CLI firstly:
+Install a Formula CLI globally:
 ```bash
-npm i formula-cli --scope=global
+npm i formula-cli -g
 ```
 
 After installation you can use CLI to compile formula file:
@@ -26,7 +45,19 @@ And also you can compile the whole directory:
 formula compile src --dir
 ```
 
+For running a tests inside formula:
+```bash
+formula test example.formula
+```
 # Changelog
+
+## v2.1
+- Fixed infinite loop when `#` at the end of file
+
+## v2.0
+- Added testing system that allows to test formulas matching
+- Added `formula test` CLI command
+- Added `test`
 
 ## v1.1
 - Added support of both string formats (`'` and `"`)
@@ -35,6 +66,7 @@ formula compile src --dir
 - Fixed if-else compilation
 
 ## v1.0
+- Added `formula compile` CLI command
 - Added `match`
 - Added `group`
 - Added `if` and `else`

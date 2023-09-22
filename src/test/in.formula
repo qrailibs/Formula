@@ -1,21 +1,18 @@
+# Variables
 define VAL match '[a-f0-9]'
 define VAL_3 match(3) VAL
 define VAL_6 match(6) VAL
 
-# define HASHVALUE function (min, max) {
-#  	  match(min, max) '[a-f0-9]'
-# }
+# Tests
+test '#fff'
+test '#ababab'
+test '#000000'
+test '#f0f0f0'
 
+# Formula
 match START
-
 match '#'
 group {
 	match VAL_3 | VAL_6 # 3 or 6 hex values
 }
-
 match END
-
-test '#fff'
-test '#000000'
-
-# hello
