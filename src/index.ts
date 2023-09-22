@@ -13,7 +13,7 @@ import chalk from 'chalk';
 	let lexed: Token[] = new Lexer(true).lex(formulaContent);
 	
 	console.log('--------------');
-	console.log('LEXED', lexed);
+	console.log(chalk.yellow('LEXED'), lexed);
 	console.log('--------------');
 	
 	// Parse
@@ -22,12 +22,12 @@ import chalk from 'chalk';
 	// Serialize
 	let result: string = parseResult.program.serialize(parseResult.context);
 	console.log('--------------');
-	console.log('RESULT', result);
-	console.log('CONTEXT', parseResult.context);
+	console.log(chalk.blue('RESULT'), result);
+	console.log(chalk.blue('CONTEXT'), parseResult.context);
 	console.log('--------------');
 
 	// Test
-	console.log('TESTING');
+	console.log(chalk.blue('TESTING'));
 	const textSuccess = chalk.green
 	const textError = chalk.red
 	let testNumber = 1
@@ -35,7 +35,13 @@ import chalk from 'chalk';
 		const success: boolean = new RegExp(result).test(test.value);
 
 		const message = `${success ? '✓' : '✖'} Test ${testNumber}: ${test.value}`;
-		console.log(success ? textSuccess(message) : textError(message));
+		console.log(
+			' '.repeat(4) +
+			(success
+				? textSuccess(message)
+				: textError(message)
+			)
+		);
 		testNumber++;
 	}
 	console.log('--------------');

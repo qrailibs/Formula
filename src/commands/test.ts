@@ -18,8 +18,7 @@ export const handler = async (argv: Arguments<Options>) => {
 	const { path: _path } = argv;
 
 	await fn(_path);
-	
-	process.stdout.write('> FINISHED');
+
 	process.exit(0);
 };
 
@@ -31,11 +30,12 @@ export const fn = async (path: string) => {
 	const textError = chalk.red
 
 	// Print test results
+	console.log(`[${path}]`);
 	for(const testResult of testResults) {
 		const message = `${testResult.isSuccess ? '✓' : '✖'} Test ${testResult.number}: ${testResult.value}`;
 
-		console.log(testResult.isSuccess
+		console.log(' '.repeat(4) + (testResult.isSuccess
 			? textSuccess(message)
-			: textError(message));
+			: textError(message)));
 	}
 }
