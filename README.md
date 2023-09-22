@@ -49,6 +49,10 @@ For running a tests inside formula:
 ```bash
 formula test example.formula
 ```
+
+# Examples
+You can see examples of formulas in [`/example`](https://github.com/datasco/Formula/tree/main/examples) directory in this repository.
+
 # Changelog
 
 ## v2.1
