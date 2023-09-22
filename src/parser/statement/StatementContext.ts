@@ -1,9 +1,7 @@
-import { DefineStatement } from "./Statements"
+import DefineStatement from "./statements/DefineStatement";
+import TestStatement from "./statements/TestStatement";
 
 export default class StatementContext {
-	define: { [key: string]: DefineStatement }
-
-	constructor() {
-		this.define = {}
-	}
+	define: Record<string, DefineStatement> = {};
+	test: TestStatement[] = [];
 }

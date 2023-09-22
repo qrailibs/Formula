@@ -3,7 +3,8 @@ enum StatementType {
 	Group = 'group',
 	Match = 'match',
 	Condition = 'condition',
-	Define = 'define'
+	Define = 'define',
+	Test = 'test'
 }
 
-export default StatementType
+export default StatementType;

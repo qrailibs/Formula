@@ -1,9 +1,15 @@
 import Token from "./type/Token";
 import TokenType from "./type/TokenType";
 
-import { ProgramStatement, GroupStatement, MatchStatement, IfElseStatement, DefineStatement } from './statement/Statements';
 import IStatement from "./statement/IStatement";
 import StatementContext from "./statement/StatementContext";
+
+import ProgramStatement from "./statement/statements/ProgramStatement";
+import MatchStatement from "./statement/statements/MatchStatement";
+import GroupStatement from "./statement/statements/GroupStatement";
+import IfElseStatement from "./statement/statements/IfElseStatement";
+import DefineStatement from "./statement/statements/DefineStatement";
+import TestStatement from "./statement/statements/TestStatement";
 
 type ParserResult = {
 	program: ProgramStatement,
@@ -74,6 +80,13 @@ export default class Parser {
 				console.log('IN PARSE PARSING DEFINE')
 				let res = parseDefine()
 				console.log('IN PARSE PARSED DEFINE', res, currPos, tokens[currPos])
+				return res
+			}
+			// Test
+			else if(currToken?.type === TokenType.Test) {
+				console.log('IN PARSE PARSING TEST')
+				let res = parseTest()
+				console.log('IN PARSE PARSED TEST', res, currPos, tokens[currPos])
 				return res
 			}
 			else if(currToken) {
@@ -315,6 +328,28 @@ export default class Parser {
 			}
 
 			throw new Error(`Expected value, but got: "${tokens[currPos]?.type}" (At line ${tokens[currPos]?.pos?.start.line})`)
+		}
+
+		// Test
+		function parseTest(): TestStatement | null {
+			next()
+
+			// Value
+			let value: string | null | undefined = undefined
+			if(is(TokenType.LiteralString)) {
+				value = tokens[currPos].value
+				next()
+			}
+			else {
+				throw new Error(`Expected value, but got: "${tokens[currPos]?.type}" (At line ${tokens[currPos]?.pos?.start.line})`)
+			}
+
+			let stmt: TestStatement = new TestStatement(value)
+
+			// Add to context
+			context.test.push(stmt)
+
+			return stmt
 		}
 
 		while(currPos < tokens.length) {

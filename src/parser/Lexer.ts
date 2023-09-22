@@ -2,7 +2,7 @@ import Token from "./type/Token";
 import TokenType from "./type/TokenType";
 
 function logLexer(state: string, char: string, pos: number, data?: any) {
-	console.log(`[${state}] "${char}" at ${pos} ${data ? '(' + data + ')' : ''}`)
+	console.log(`[${state}] "${char}" at ${pos} ${data ? '(' + data + ')' : ''}`);
 }
 
 export default class Lexer {
@@ -22,32 +22,33 @@ export default class Lexer {
 			'match': new Token(TokenType.Match, 'match', null),
 			'group': new Token(TokenType.Group, 'group', null),
 			'define': new Token(TokenType.Define, 'define', null),
+			'test': new Token(TokenType.Test, 'test', null),
 
 			'if': new Token(TokenType.If, 'if', null),
 			'else': new Token(TokenType.Else, 'else', null),
-		}
+		};
 	}
 
 	// Transform formula to array of statements
 	public static lex(text: string): Token[] {
-		let out: Token[] = []
-		let currPos: number = 0
+		let out: Token[] = [];
+		let currPos: number = 0;
 
 		// Token pos
-		let currLine: number = 1
-		let currColumn: number = 1
+		let currLine: number = 1;
+		let currColumn: number = 1;
 
 		function next() {
-			currPos++
-			currColumn++
+			currPos++;
+			currColumn++;
 		}
 		function increase(val: number) {
-			currPos += val
-			currColumn += val
+			currPos += val;
+			currColumn += val;
 		}
 		function nextLine() {
-			currLine++
-			currColumn = 1
+			currLine++;
+			currColumn = 1;
 		}
 		function getPos() {
 			return {
@@ -55,135 +56,135 @@ export default class Lexer {
 					line: currLine,
 					column: currColumn
 				}
-			}
+			};
 		}
 
 		// Lookahead text to match string
 		function lookaheadString(str: string): boolean {
-			const parts: string[] = str.split('')
+			const parts: string[] = str.split('');
 		  
 			for (let i = 0; i < parts.length; i++) {
 			  if (text[currPos + i] !== parts[i]) {
-				return false
+				return false;
 			  }
 			}
 		  
-			return true
+			return true;
 		}
 		function lookahead(match: RegExp, matchNext?: RegExp): string[] {
-			const bucket: string[] = []
+			const bucket: string[] = [];
 
 			while (true) {
-				const nextIndex: number = currPos + bucket.length
-				const nextToken: string = text[nextIndex]
-				if (!nextToken) { break }
-				let m: string | RegExp = match
-				if (matchNext && bucket.length) { m = matchNext }
-				if (m && !m.test(nextToken)) { break }
-				bucket.push(nextToken)
+				const nextIndex: number = currPos + bucket.length;
+				const nextToken: string = text[nextIndex];
+				if (!nextToken) { break; }
+				let m: string | RegExp = match;
+				if (matchNext && bucket.length) { m = matchNext; }
+				if (m && !m.test(nextToken)) { break; }
+				bucket.push(nextToken);
 			}
 
-			return bucket
+			return bucket;
 		}
 
 		while(currPos < text.length) {
-			const char: string = text[currPos]
+			const char: string = text[currPos];
 
-			logLexer('LOOP', char, currPos)
+			logLexer('LOOP', char, currPos);
 
 			// Skip space
 			if(/\s/.test(char)) {
 				if(char === '\n') {
-					nextLine()
+					nextLine();
 				}
-				next()
-				continue
+				next();
+				continue;
 			}
 
 			// String literal
 			if(char === "'" || char === '"') {
-				next()
+				next();
 
-				const bucket = lookahead(new RegExp(`[^${char}]`))
-				out.push(new Token(TokenType.LiteralString, bucket.join(''), getPos()))
-				increase(bucket.length + 1)
+				const bucket = lookahead(new RegExp(`[^${char}]`));
+				out.push(new Token(TokenType.LiteralString, bucket.join(''), getPos()));
+				increase(bucket.length + 1);
 
-				logLexer('STRING', char, currPos, bucket.join(''))
+				logLexer('STRING', char, currPos, bucket.join(''));
 				
-				continue
+				continue;
 			}
 
 			// Comment
 			if(char === '#') {
 				while(text[currPos] !== '\n') {
-					next()
+					next();
 				}
 			}
 
 			// Name
-			const literalRegex = /[a-zA-Z_]/
-			const literalRegexNext = /[a-zA-Z0-9_]/
-			const literalRegexNumber = /[0-9]/
+			const literalRegex = /[a-zA-Z_]/;
+			const literalRegexNext = /[a-zA-Z0-9_]/;
+			const literalRegexNumber = /[0-9]/;
 			if (literalRegex.test(char)) {
-				const bucket = lookahead(literalRegex, literalRegexNext)
-				let value: string = bucket.join('')
-				increase(bucket.length)
+				const bucket = lookahead(literalRegex, literalRegexNext);
+				let value: string = bucket.join('');
+				increase(bucket.length);
 
 				if(Lexer.tokens[value]) {
-					let tok = Object.assign({}, Lexer.tokens[value])
-					tok.pos = getPos()
-					out.push(tok)
+					let tok = Object.assign({}, Lexer.tokens[value]);
+					tok.pos = getPos();
+					out.push(tok);
 				}
 				else {
-					out.push(new Token(TokenType.Name, value, getPos()))
+					out.push(new Token(TokenType.Name, value, getPos()));
 				}
 
-				logLexer('NAME', char, currPos, value)
+				logLexer('NAME', char, currPos, value);
 
-				continue
+				continue;
 			}
 			else if(literalRegexNumber.test(char)) {
-				const bucket = lookahead(literalRegexNumber)
-				let value: string = bucket.join('')
-				increase(bucket.length)
+				const bucket = lookahead(literalRegexNumber);
+				let value: string = bucket.join('');
+				increase(bucket.length);
 
 				if(Lexer.tokens[value]) {
-					let tok = Object.assign({}, Lexer.tokens[value])
-					tok.pos = getPos()
-					out.push(tok)
+					let tok = Object.assign({}, Lexer.tokens[value]);
+					tok.pos = getPos();
+					out.push(tok);
 				}
 				else {
-					out.push(new Token(TokenType.LiteralNumber, value, { start: { line: currLine, column: currPos }}))
+					out.push(new Token(TokenType.LiteralNumber, value, { start: { line: currLine, column: currPos }}));
 				}
 
-				logLexer('NUMBER', char, currPos, value)
+				logLexer('NUMBER', char, currPos, value);
 
-				continue
+				continue;
 			}
 
 			// Other tokens
-			let didMatch: boolean = false
+			let didMatch: boolean = false;
 			for(const key in Lexer.tokens) {
 				if(!lookaheadString(key)) {
-					continue
+					continue;
 				}
 
 				if(Lexer.tokens[key]) {
-					let tok = Object.assign({}, Lexer.tokens[key])
-					tok.pos = getPos()
-					out.push(tok)
-					increase(key.length)
-					didMatch = true
+					let tok = Object.assign({}, Lexer.tokens[key]);
+					tok.pos = getPos();
+					out.push(tok);
+					increase(key.length);
+					didMatch = true;
 				}
 				else {
-					out.push(new Token(TokenType.Unknown, key, getPos()))
-					continue
+					out.push(new Token(TokenType.Unknown, key, getPos()));
+					continue;
 				}
 			}
 
-			if(didMatch) continue
+			if(didMatch) continue;
 		}
 
-		return out
+		return out;
 	}
 }

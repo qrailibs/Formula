@@ -1,30 +1,6 @@
-import type { Arguments, CommandBuilder } from 'yargs'
-import fs from 'fs'
-import path from 'path'
-import Lexer from '../parser/Lexer'
-import Token from '../parser/type/Token'
-import Parser from '../parser/Parser'
-
-const readFile = (filepath: fs.PathLike): string => {
-	return fs.readFileSync(filepath, 'utf8')
-}
-const writeFile = async(filepath: fs.PathLike, content: string) => {
-	fs.writeFileSync(filepath, content)
-}
-const compileFile = (filePath: string) => {
-	let baseName: string = path.basename(filePath, '.formula')
-	let content: string = readFile(filePath)
-	let result: string = compileFormula(content)
-	writeFile('./dist/' + baseName + '.txt', result)
-}
-const compileFormula = (formula: string): string => {
-	// Lex
-	let lexed: Token[] = Lexer.lex(formula)
-	// Parse
-	let parseResult = Parser.parse(lexed)
-	// Serialize
-	return parseResult.program.serialize(parseResult.context)
-}
+import type { Arguments, CommandBuilder } from 'yargs';
+import { compileFile } from '../helpers/compileFile';
+import { compileFolder } from '../helpers/compileFolder';
 
 type Options = {
 	path: string;
@@ -41,29 +17,22 @@ export const builder: CommandBuilder<Options, Options> = (yargs) =>
     })
     .positional('path', { type: 'string', demandOption: true });
 
-export const handler = (argv: Arguments<Options>): void => {
+export const handler = async (argv: Arguments<Options>) => {
 	const { path: _path, dir } = argv;
-	// Whole directory
-	if(dir) {
-		let files: string[] = fs.readdirSync(_path)
-		
-		// Create /dist
-		if (!fs.existsSync('./dist')){
-			fs.mkdirSync('./dist')
-		}
 
-		// Compile files to /dist
-		for(let file of files) {
-			if(file.endsWith('.formula')) {
-				compileFile(_path + '/' + file)
-			}
-		}
-	}
-	// File
-	else {
-		compileFile(_path)
-	}
+	await fn(_path, dir ?? false);
 	
 	process.stdout.write('> FINISHED');
 	process.exit(0);
 };
+
+export const fn = async (path: string, isDir: boolean) => {
+	// Whole directory
+	if(isDir) {
+		await compileFolder(path);
+	}
+	// One file
+	else {
+		await compileFile(path);
+	}
+}

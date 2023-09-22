@@ -37,6 +37,8 @@ enum TokenType {
 
 	// define
 	Define = 'define',
+	// test
+	Test = 'test',
 
 	// Name
 	Name = 'name',
@@ -47,4 +49,4 @@ enum TokenType {
 	LiteralNumber = 'literal_number'
 }
 
-export default TokenType
+export default TokenType;

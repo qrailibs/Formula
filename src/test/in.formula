@@ -14,3 +14,6 @@ group {
 }
 
 match END
+
+test '#fff'
+test '#000000'

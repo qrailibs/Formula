@@ -1,0 +1,19 @@
+# ----------
+# test - allows you to automatically test that your formulas is matches values!
+# ----------
+
+# Write some formula in a file
+match 'A' | 'B'
+match 'C'
+match+ 'D'
+
+# Test that your formula matches required values
+test 'AC'
+test 'ACD'
+test 'BCD'
+test 'BCDDDDD'
+
+# NOTICE
+# Test statements is not being transpiled to some form of RegExp.
+# Tests will be runned using `formula test ./some.formula` command
+# Also you can run tests on all files in directory using `formula test src --dir` command
