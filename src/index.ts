@@ -10,14 +10,14 @@ import chalk from 'chalk';
 	let formulaContent: string = await readFile('src/test/in.formula');
 	
 	// Lex
-	let lexed: Token[] = Lexer.lex(formulaContent);
+	let lexed: Token[] = new Lexer(true).lex(formulaContent);
 	
 	console.log('--------------');
 	console.log('LEXED', lexed);
 	console.log('--------------');
 	
 	// Parse
-	let parseResult = Parser.parse(lexed);
+	let parseResult = new Parser(true).parse(lexed);
 	
 	// Serialize
 	let result: string = parseResult.program.serialize(parseResult.context);

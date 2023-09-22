@@ -25,7 +25,7 @@ export const handler = async (argv: Arguments<Options>) => {
 
 export const fn = async (path: string) => {
 	const formula = await readFile(path);
-	const testResults = await testString(formula);
+	const testResults = testString(formula);
 
 	const textSuccess = chalk.green
 	const textError = chalk.red

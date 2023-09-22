@@ -10,10 +10,10 @@ export type CompileResult = {
 
 export const compileString = (formula: string): CompileResult => {
 	// 1. Lexing
-	let lexed: Token[] = Lexer.lex(formula);
+	let lexed: Token[] = new Lexer().lex(formula);
 	
 	// 2. Parsing
-	let parseResult = Parser.parse(lexed);
+	let parseResult = new Parser().parse(lexed);
 
 	// 3. Serializing to RegExp
 	return {

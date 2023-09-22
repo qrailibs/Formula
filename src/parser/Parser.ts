@@ -17,16 +17,28 @@ type ParserResult = {
 }
 
 export default class Parser {
-	public static parse(tokens: Token[]): ParserResult {
-		const out: IStatement[] = []
-		const context: StatementContext = new StatementContext()
-		let currPos: number = 0
+	protected _debug: boolean;
+	constructor(debug: boolean = false) {
+		this._debug = debug;
+	}
+
+	protected log(...messages: any[]) {
+		if(!this._debug) return;
+
+		console.log(...messages);
+	}
+
+	public parse(tokens: Token[]): ParserResult {
+		const self = this;
+		const out: IStatement[] = [];
+		const context: StatementContext = new StatementContext();
+		let currPos: number = 0;
 
 		function next() {
-			currPos++
+			currPos++;
 		}
 		function prev() {
-			currPos--
+			currPos--;
 		}
 
 		function expect(type: TokenType) {
@@ -51,42 +63,42 @@ export default class Parser {
 
 		// Statements
 		function parse(): IStatement | null {
-			console.log('IN PARSE', currPos, tokens[currPos])
+			self.log('IN PARSE', currPos, tokens[currPos])
 			let currToken: Token = tokens[currPos]
 
 			// Match
 			if(currToken?.type === TokenType.Match) {
-				console.log('IN PARSE PARSING MATCH', currPos)
+				self.log('IN PARSE PARSING MATCH', currPos)
 				let res = parseMatch()
-				console.log('IN PARSE PARSED MATCH', res, currPos, tokens[currPos])
+				self.log('IN PARSE PARSED MATCH', res, currPos, tokens[currPos])
 				return res
 			}
 			// Group
 			else if(currToken?.type === TokenType.Group) {
-				console.log('IN PARSE PARSING GROUP')
+				self.log('IN PARSE PARSING GROUP')
 				let res = parseGroup()
-				console.log('IN PARSE PARSED GROUP', res, currPos, tokens[currPos])
+				self.log('IN PARSE PARSED GROUP', res, currPos, tokens[currPos])
 				return res
 			}
 			// If-else
 			else if(currToken?.type === TokenType.If) {
-				console.log('IN PARSE PARSING IF-ELSE')
+				self.log('IN PARSE PARSING IF-ELSE')
 				let res = parseIfElse()
-				console.log('IN PARSE PARSED IF-ELSE', res, currPos, tokens[currPos])
+				self.log('IN PARSE PARSED IF-ELSE', res, currPos, tokens[currPos])
 				return res
 			}
 			// Define
 			else if(currToken?.type === TokenType.Define) {
-				console.log('IN PARSE PARSING DEFINE')
+				self.log('IN PARSE PARSING DEFINE')
 				let res = parseDefine()
-				console.log('IN PARSE PARSED DEFINE', res, currPos, tokens[currPos])
+				self.log('IN PARSE PARSED DEFINE', res, currPos, tokens[currPos])
 				return res
 			}
 			// Test
 			else if(currToken?.type === TokenType.Test) {
-				console.log('IN PARSE PARSING TEST')
+				self.log('IN PARSE PARSING TEST')
 				let res = parseTest()
-				console.log('IN PARSE PARSED TEST', res, currPos, tokens[currPos])
+				self.log('IN PARSE PARSED TEST', res, currPos, tokens[currPos])
 				return res
 			}
 			else if(currToken) {
@@ -100,28 +112,28 @@ export default class Parser {
 
 			let currToken: Token = tokens[currPos]
 
-			console.log('PREV LOOP', currToken)
+			self.log('PREV LOOP', currToken)
 			do {
 				currToken = tokens[currPos]
 				if(currToken?.type === until || !currToken) {
 					break
 				}
 
-				console.log('BEFORE PARSE', currToken, currPos)
+				self.log('BEFORE PARSE', currToken, currPos)
 
 				// Parse statement
 				let stmt: IStatement | null = parse()
 				// Add
 				if(stmt) { result.push(stmt) }
 
-				console.log('AFTER PARSE', currToken, currPos)
+				self.log('AFTER PARSE', currToken, currPos)
 			} while(currToken?.type !== until || !currToken)
 
 			if(currToken?.type !== until) {
 				prev()
 			}
 
-			console.log('AFTER LOOP', tokens[currPos])
+			self.log('AFTER LOOP', tokens[currPos])
 
 			return result
 		}
@@ -156,8 +168,7 @@ export default class Parser {
 					next()
 				}
 				else {
-					console.error('Expected number (amount of matches), but got: ' + token)
-					next()
+					throw new Error('Expected number (amount of matches), but got: ' + token)
 				}
 				token = tokens[currPos]
 
@@ -171,8 +182,7 @@ export default class Parser {
 						next()
 					}
 					else {
-						console.error('Expected number (amount of max matches), but got: ' + token)
-						prev()
+						throw new Error('Expected number (amount of max matches), but got: ' + token)
 					}
 				}
 
@@ -256,7 +266,7 @@ export default class Parser {
 			expect(TokenType.GroupEnd)
 			next()
 
-			console.log('PARSED GROUP')
+			self.log('PARSED GROUP')
 
 			return group
 		}
@@ -298,7 +308,7 @@ export default class Parser {
 				next()
 			}
 
-			console.log('PARSED IF-ELSE')
+			self.log('PARSED IF-ELSE')
 			return new IfElseStatement(condition, thenBranch, elseBranch)
 		}
 

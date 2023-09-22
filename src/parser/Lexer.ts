@@ -1,11 +1,18 @@
 import Token from "./type/Token";
 import TokenType from "./type/TokenType";
 
-function logLexer(state: string, char: string, pos: number, data?: any) {
-	console.log(`[${state}] "${char}" at ${pos} ${data ? '(' + data + ')' : ''}`);
-}
-
 export default class Lexer {
+	protected _debug: boolean;
+	constructor(debug: boolean = false) {
+		this._debug = debug;
+	}
+
+	protected log(state: string, char: string, pos: number, data?: any) {
+		if(!this._debug) return;
+
+		console.log(`[${state}] "${char}" at ${pos} ${data ? '(' + data + ')' : ''}`);
+	}
+
 	private static get tokens(): { [key: string]: Token } {
 		return {
 			'?': new Token(TokenType.Optional, '?', null),
@@ -30,7 +37,7 @@ export default class Lexer {
 	}
 
 	// Transform formula to array of statements
-	public static lex(text: string): Token[] {
+	public lex(text: string): Token[] {
 		let out: Token[] = [];
 		let currPos: number = 0;
 
@@ -90,7 +97,7 @@ export default class Lexer {
 		while(currPos < text.length) {
 			const char: string = text[currPos];
 
-			logLexer('LOOP', char, currPos);
+			this.log('LOOP', char, currPos);
 
 			// Skip space
 			if(/\s/.test(char)) {
@@ -109,14 +116,14 @@ export default class Lexer {
 				out.push(new Token(TokenType.LiteralString, bucket.join(''), getPos()));
 				increase(bucket.length + 1);
 
-				logLexer('STRING', char, currPos, bucket.join(''));
+				this.log('STRING', char, currPos, bucket.join(''));
 				
 				continue;
 			}
 
 			// Comment
 			if(char === '#') {
-				while(text[currPos] !== '\n') {
+				while(currPos < text.length && text[currPos] !== '\n') {
 					next();
 				}
 			}
@@ -139,7 +146,7 @@ export default class Lexer {
 					out.push(new Token(TokenType.Name, value, getPos()));
 				}
 
-				logLexer('NAME', char, currPos, value);
+				this.log('NAME', char, currPos, value);
 
 				continue;
 			}
@@ -157,7 +164,7 @@ export default class Lexer {
 					out.push(new Token(TokenType.LiteralNumber, value, { start: { line: currLine, column: currPos }}));
 				}
 
-				logLexer('NUMBER', char, currPos, value);
+				this.log('NUMBER', char, currPos, value);
 
 				continue;
 			}
