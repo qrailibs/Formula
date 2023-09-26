@@ -55,21 +55,24 @@ You can see examples of formulas in [`/example`](https://github.com/datasco/Form
 
 # Changelog
 
-## v2.1
+## v1.2.2
+- Added lookahead & lookbehind syntax (`match ...'a' | 'a'...`)
+
+## v1.2.1
 - Fixed infinite loop when `#` at the end of file
 
-## v2.0
+## v1.2.0
 - Added testing system that allows to test formulas matching
 - Added `formula test` CLI command
 - Added `test`
 
-## v1.1
+## v1.1.1
 - Added support of both string formats (`'` and `"`)
 - Added support of `+`/`(min,max)` and  `?` to groups
 - Added `|` operator for matching
 - Fixed if-else compilation
 
-## v1.0
+## v1.1.0
 - Added `formula compile` CLI command
 - Added `match`
 - Added `group`
