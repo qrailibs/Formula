@@ -5,7 +5,7 @@ import IStatement from "./statement/IStatement";
 import StatementContext from "./statement/StatementContext";
 
 import ProgramStatement from "./statement/statements/ProgramStatement";
-import MatchStatement from "./statement/statements/MatchStatement";
+import MatchStatement, { MatchPrimitive } from "./statement/statements/MatchStatement";
 import GroupStatement from "./statement/statements/GroupStatement";
 import IfElseStatement from "./statement/statements/IfElseStatement";
 import DefineStatement from "./statement/statements/DefineStatement";
@@ -207,34 +207,76 @@ export default class Parser {
 		}
 
 		// Match
-		function parseMatchPrimitive() {
+		function parseMatchPrimitive(): MatchPrimitive {
 			let token: Token = tokens[currPos]
+			let primitive: MatchPrimitive
 
-			if(token?.type === TokenType.Name) {
+			// Lookbehind
+			let isLookAhead: boolean = false
+			if(token?.type === TokenType.Pseudo) {
+				isLookAhead = true
+
+				// Skip this token
 				next()
-				return { of: token.value }
+				token = tokens[currPos]
 			}
-			else if(token?.type === TokenType.LiteralString) {
+
+			// Variable
+			if(token?.type === TokenType.Name) {
+				primitive = {
+					type: 'define',
+					value: token.value
+				}
+				
 				next()
-				return token.value
+				token = tokens[currPos]
+			}
+			// Literal
+			else if(token?.type === TokenType.LiteralString) {
+				primitive = {
+					type: 'literal',
+					value: token.value
+				}
+
+				next()
+				token = tokens[currPos]
 			}
 			else {
 				throw new Error(`Expected match primitive (variable name or value), but got: "${token?.type}" (At line ${token?.pos?.start.line})`)
 			}
+
+			// Lookbehind
+			if(isLookAhead) {
+				primitive.pseudo = 'ahead'
+			}
+			// Lookahead
+			if(token?.type === TokenType.Pseudo) {
+				next()
+
+				// Without lookbehind
+				if(!isLookAhead) {
+					primitive.pseudo = 'behind'
+				}
+				else {
+					throw new Error(`Unexpected "..." lookbehind, you cannot have lookahead and lookbehind at the same time (At line ${token?.pos?.start.line})`)
+				}
+			}
+
+			return primitive
 		}
 
 		function parseMatch(): MatchStatement | null {
 			next()
 			let params = parseMatchParams()
-			let primitives: any[] = [ parseMatchPrimitive() ]
+			let primitives: MatchPrimitive[] = [ parseMatchPrimitive() ]
 
-			// Or
+			// While we got or delimiter
 			while(tokens[currPos]?.type === TokenType.Or) {
 				next()
 				primitives.push(parseMatchPrimitive())
 			}
 
-			return new MatchStatement(primitives, params)
+			return new MatchStatement("or", primitives, params)
 		}
 		
 		// Group

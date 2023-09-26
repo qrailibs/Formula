@@ -3,77 +3,114 @@ import IStatement from "../IStatement";
 import StatementContext from "../StatementContext";
 import StatementType from "../StatementType";
 
-export type SpecialMatcher = { of: string };
-export type LiteralMatcher = string;
-export type Matcher = SpecialMatcher | LiteralMatcher;
+export type MatchPrimitive = {
+	pseudo?: "behind" | "ahead",
+	type: "define" | "literal",
+	value: string
+}
+
+export type MatchOperator = "or"
+const Operators: Readonly<Record<MatchOperator, string>> = {
+	"or": "|"
+};
 
 export default class MatchStatement implements IStatement {
 	public type: StatementType = StatementType.Match;
-	public values: Matcher[];
+	public operator: MatchOperator;
+	public values: MatchPrimitive[];
 	public params: MatcherParams;
 
-	constructor(values: Matcher[], params: MatcherParams = { optional: false }) {
+	constructor(operator: MatchOperator, values: MatchPrimitive[], params: MatcherParams = { optional: false }) {
+		this.operator = operator;
 		this.values = values;
 		this.params = params;
 	}
 
-	private serializeOne(ctx: StatementContext, value: Matcher) {
+	private serializeOne(ctx: StatementContext, primitive: MatchPrimitive) {
+		let regexResult = '';
+
 		// Special
-		if(typeof value === 'object' && 'of' in value) {
+		if(primitive.type === 'define') {
 			// Constants
-			switch(value.of) {
+			switch(primitive.value) {
 				case 'START': {
-					return '^';
+					regexResult = '^';
+					break;
 				}
 				case 'END': {
-					return '$';
+					regexResult = '$';
+					break;
 				}
 				case 'DIGIT': {
-					return '\\d';
+					regexResult = '\\d';
+					break;
 				}
 				case 'NONDIGIT': {
-					return '\\D';
+					regexResult = '\\D';
+					break;
 				}
 				case 'LETTER': {
-					return '[a-zA-Z]';
+					regexResult = '[a-zA-Z]';
+					break;
 				}
 				case 'WORD': {
-					return '\\w';
+					regexResult = '\\w';
+					break;
 				}
 				case 'NONWORD': {
-					return '\\W';
+					regexResult = '\\W';
+					break;
 				}
 				case 'ANY': {
-					return '.';
+					regexResult = '.';
+					break;
 				}
 				case 'SPACE': {
-					return '\\s';
+					regexResult = '\\s';
+					break;
 				}
 			}
 
 			// Definitions
-			if(ctx.define[value.of]) {
-				return ctx.define[value.of].value.serialize(ctx);
+			if(ctx.define[primitive.value]) {
+				regexResult = ctx.define[primitive.value].value.serialize(ctx);
+			}
+			else {
+				throw new Error(`Unexpected variable "${primitive.value}", there's no definition for that variable.`);
 			}
 		}
 		// Range of characters
-		else if(value.startsWith('[') && value.endsWith(']')) {
-			return value;
+		else if(primitive.value.startsWith('[') && primitive.value.endsWith(']')) {
+			regexResult = primitive.value;
 		}
 		// Literal
 		else {
-			return value.replace(/\-/g, '\\-').replace(/\./g, '\\.');
+			regexResult = primitive.value.replace(/\-/g, '\\-').replace(/\./g, '\\.');
 		}
+
+		// Lookahead
+		if(primitive.pseudo === 'ahead') {
+			regexResult = `(?=${regexResult})`
+		}
+		// Lookbehind
+		else if(primitive.pseudo === 'behind') {
+			regexResult = `(?<=${regexResult})`
+		}
+
+		return regexResult;
 	}
 
 	public serialize(ctx: StatementContext): string {
 		let result = null;
 		
-		let doPacking = this.values.length > 1 && this.values.every(value => typeof value === 'string' ? value.length > 1 : true);
+		// Should values be packed into anonymous group? (For splitting with operator)
+		let doPacking = this.values.length > 1 && this.values.every(primitive => primitive.type === 'literal' ? primitive.value.length > 1 : true);
+
+		// Concat all values and split them with operator
 		result = this.values.map(value => 
 			doPacking ? '(?:' + this.serializeOne(ctx, value) + ')'
 				: this.serializeOne(ctx, value)
-		).join('|');
+		).join(Operators[this.operator]);
 
 		return result !== null 
 			? compileParams(result, this.params)

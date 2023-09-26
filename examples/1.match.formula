@@ -52,3 +52,11 @@ match? 'A'
 
 # (Matching 'HI' or 'HEY') Compiled into: (?:HI)|(?:HEY)
 match 'HI' | 'HEY'
+
+# === Examples of matching with lookbehind/lookahead ===
+
+# (Lookbehind) Compiled into: (?=A)
+match ...'A'
+
+# (Lookahead) Compiled into: (?<=A)
+match 'A'...

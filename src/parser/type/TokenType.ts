@@ -22,6 +22,9 @@ enum TokenType {
 	// )
 	ArgEnd = ')',
 
+	// ...
+	Pseudo = '...',
+
 	// |
 	Or = '|',
 	// &

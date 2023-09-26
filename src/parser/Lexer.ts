@@ -25,6 +25,7 @@ export default class Lexer {
 			'!': new Token(TokenType.Anonymous, '!', null),
 			'|': new Token(TokenType.Or, '|', null),
 			'&': new Token(TokenType.And, '&', null),
+			'...': new Token(TokenType.Pseudo, '...', null),
 			
 			'match': new Token(TokenType.Match, 'match', null),
 			'group': new Token(TokenType.Group, 'group', null),
