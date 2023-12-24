@@ -1,18 +1,15 @@
 {
-  "name": "formula-cli",
-  "version": "1.2.2",
+  "name": "@datasco/formula",
+  "version": "1.3.1",
   "description": "Simple language for describing data formats, compilable to Regex",
-  "main": "build/cli.js",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
   "files": [
     "build"
   ],
-  "bin": {
-    "formula": "./build/cli.js"
-  },
   "scripts": {
     "serve": "nodemon",
-    "build": "npx tsc",
-    "test": "jest"
+    "build": "npx tsc"
   },
   "repository": {
     "type": "git",
@@ -21,7 +18,9 @@
   "keywords": [
     "regex",
     "language",
-    "dsl"
+    "dsl",
+    "compilable",
+    "formula"
   ],
   "author": "datasco",
   "license": "ISC",
@@ -31,13 +30,11 @@
   "homepage": "https://github.com/datasco/Formula#readme",
   "dependencies": {
     "chalk": "^4.1.2",
-    "typescript": "^4.8.3",
-    "yargs": "^17.5.1"
+    "typescript": "^4.8.3"
   },
   "devDependencies": {
     "@types/jest": "^29.0.3",
     "@types/node": "^18.7.18",
-    "@types/yargs": "^17.0.12",
     "ts-jest": "^29.0.1",
     "ts-node": "^10.9.1",
     "nodemon": "^2.0.20"
