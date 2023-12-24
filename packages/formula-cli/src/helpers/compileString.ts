@@ -1,5 +1,5 @@
-import StatementContext from "../parser/statement/StatementContext";
 import { Lexer, Parser, Token } from "@datasco/formula";
+import type { StatementContext } from "@datasco/formula";
 
 export type CompileResult = {
     result: string;
