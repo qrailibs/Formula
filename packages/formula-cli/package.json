@@ -1,6 +1,6 @@
 {
   "name": "formula-cli",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "Simple language for describing data formats, compilable to Regex",
   "main": "build/cli.js",
   "files": [
@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/datasco/Formula#readme",
   "dependencies": {
-    "@datasco/formula": "^1.3.3",
+    "@datasco/formula": "^1.3.4",
     "chalk": "^4.1.2",
     "typescript": "^4.8.3",
     "yargs": "^17.5.1"
