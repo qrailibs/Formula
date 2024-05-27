@@ -1,11 +1,17 @@
-import path from 'path';
-import { writeFile } from './writeFile';
-import { readFile } from './readFile';
-import { compileString } from './compileString';
+import path from "path";
+import { writeFile } from "./writeFile";
+import { readFile } from "./readFile";
+import { compileToRegexp, compileToJs, CompileOutput } from "./compileString";
 
-export const compileFile = async (filePath: string) => {
-	let baseName: string = path.basename(filePath, '.formula');
-	let content: string = await readFile(filePath);
-	let { result } = compileString(content);
-	await writeFile('./dist/' + baseName + '.txt', result);
+/**
+ * Compile .formula file
+ * @param filePath path to filee
+ */
+export const compileFile = async (filePath: string, to: CompileOutput = "regexp") => {
+    const baseName: string = path.basename(filePath, ".formula");
+    const content: string = await readFile(filePath);
+
+    const { result } = to === "regexp" ? compileToRegexp(content) : compileToJs(content, baseName);
+
+    await writeFile("./dist/" + baseName + (to === "regexp" ? ".txt" : ".js"), result);
 };
