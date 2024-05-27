@@ -6,7 +6,7 @@ import { CompileOutput } from "./compileString";
  * Compile folder with .formula files
  * @param dirPath path to folder
  */
-export const compileFolder = async (dirPath: string, to: CompileOutput = "regexp") => {
+export const compileFolder = async (dirPath: string, to: CompileOutput = "regex") => {
     const files: string[] = await fs.promises.readdir(dirPath);
 
     // Create /dist

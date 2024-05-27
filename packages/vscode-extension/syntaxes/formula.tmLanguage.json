@@ -17,23 +17,29 @@
 	],
 	"repository": {
 		"comments": {
-			"patterns": [{
-				"name": "comment.line",
-				"begin": "#",
-				"end": "$"
-			}]
+			"patterns": [
+				{
+					"name": "comment.line",
+					"begin": "#",
+					"end": "$"
+				}
+			]
 		},
 		"keywords": {
-			"patterns": [{
-				"name": "keyword.control.formula",
-				"match": "\\b(define|match|group|test|if|else|import|export)\\b"
-			}]
+			"patterns": [
+				{
+					"name": "keyword.control.formula",
+					"match": "\\b(define|match|group|test|if|else|import|export|as|from)\\b"
+				}
+			]
 		},
 		"constants": {
-			"patterns": [{
-				"name": "constant",
-				"match": "\\b(START|END|SPACE|WORD|NONWORD|LETTER|NONDIGIT|DIGIT|ANY)\\b"
-			}]
+			"patterns": [
+				{
+					"name": "constant",
+					"match": "\\b(START|END|SPACE|WORD|NONWORD|LETTER|NONDIGIT|DIGIT|ANY)\\b"
+				}
+			]
 		},
 		"strings": {
 			"name": "string.quoted.double.formula",

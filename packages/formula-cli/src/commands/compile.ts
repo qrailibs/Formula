@@ -16,26 +16,22 @@ export const builder: CommandBuilder<Options, Options> = (yargs) =>
     yargs
         .options({
             dir: { type: "boolean" },
-            out: { type: "string", choices: ["regexp", "js"], default: "regexp" },
+            out: { type: "string", choices: ["regex", "js"], default: "regex" },
         })
         .positional("path", { type: "string", demandOption: true });
 
 export const handler = async (argv: Arguments<Options>) => {
-    const { path: _path, dir, out } = argv;
+    const { path, dir, out } = argv;
 
-    await fn(_path, dir ?? false, (out ?? "regexp") as CompileOutput);
-
-    process.stdout.write("> FINISHED");
-    process.exit(0);
-};
-
-export const fn = async (path: string, isDir: boolean, out: CompileOutput) => {
     // Whole directory
-    if (isDir) {
-        await compileFolder(path, out);
+    if (dir) {
+        await compileFolder(path, (out ?? "regex") as CompileOutput);
     }
     // One file
     else {
-        await compileFile(path, out);
+        await compileFile(path, (out ?? "regex") as CompileOutput);
     }
+
+    process.stdout.write("> FINISHED");
+    process.exit(0);
 };
